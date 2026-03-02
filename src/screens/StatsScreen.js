@@ -5,32 +5,35 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { useFocusEffect } from '@react-navigation/native';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { getStepsForWeek, getCompletedTodosCountForWeek } from '../database/Database';
 import { getCurrentWeekDates, getShortDayName, formatDate } from '../utils/helpers';
 
 const screenWidth = Dimensions.get('window').width - Spacing.md * 2;
 
-const chartConfig = {
-    backgroundColor: Colors.card,
-    backgroundGradientFrom: Colors.card,
-    backgroundGradientTo: Colors.card,
-    decimalCount: 0,
-    color: (opacity = 1) => `rgba(80, 200, 120, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(160, 174, 192, ${opacity})`,
-    style: { borderRadius: BorderRadius.lg },
-    propsForBackgroundLines: { strokeDasharray: '', stroke: Colors.border, strokeWidth: 0.5 },
-    propsForDots: { r: '5', strokeWidth: '2', stroke: Colors.prodPrimary },
-    fillShadowGradientFrom: Colors.healthPrimary,
-    fillShadowGradientTo: 'transparent',
-    fillShadowGradientOpacity: 0.3,
-    barPercentage: 0.6,
-};
-
 const StatsScreen = () => {
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const [weekOffset, setWeekOffset] = useState(0);
     const [stepsData, setStepsData] = useState(null);
     const [todosData, setTodosData] = useState(null);
+
+    const chartConfig = {
+        backgroundColor: Colors.card,
+        backgroundGradientFrom: Colors.card,
+        backgroundGradientTo: Colors.card,
+        decimalCount: 0,
+        color: (opacity = 1) => `rgba(80, 200, 120, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(160, 174, 192, ${opacity})`,
+        style: { borderRadius: BorderRadius.lg },
+        propsForBackgroundLines: { strokeDasharray: '', stroke: Colors.border, strokeWidth: 0.5 },
+        propsForDots: { r: '5', strokeWidth: '2', stroke: Colors.prodPrimary },
+        fillShadowGradientFrom: Colors.healthPrimary,
+        fillShadowGradientTo: 'transparent',
+        fillShadowGradientOpacity: 0.3,
+        barPercentage: 0.6,
+    };
 
     const getWeekDatesWithOffset = (offset) => {
         const today = new Date();
@@ -77,7 +80,7 @@ const StatsScreen = () => {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+            <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Insights</Text>
@@ -128,7 +131,7 @@ const StatsScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
     scrollView: { flex: 1 },
     scrollContent: { padding: Spacing.md, paddingTop: Spacing.xl },

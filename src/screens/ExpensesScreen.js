@@ -5,7 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { BarChart } from 'react-native-chart-kit';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { getExpensesForDate, addExpense, getWeeklyExpenseStats, getMonthlyExpenseTotal } from '../database/Database';
@@ -13,16 +14,9 @@ import { getTodayDate, getCurrentWeekDates, getShortDayName } from '../utils/hel
 
 const screenWidth = Dimensions.get('window').width;
 
-const CATEGORIES = [
-    { id: 'Food', icon: 'food', color: '#FF9F43' },
-    { id: 'Transport', icon: 'car', color: '#00CFE8' },
-    { id: 'Bills', icon: 'file-document-outline', color: '#EA5455' },
-    { id: 'Shopping', icon: 'shopping', color: '#7367F0' },
-    { id: 'Entertainment', icon: 'gamepad-variant', color: '#28C76F' },
-    { id: 'Other', icon: 'dots-horizontal', color: Colors.textMuted },
-];
-
 const ExpensesScreen = () => {
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { state, refreshDashboard } = useAppContext();
     const { user } = useAuth();
     const [expenses, setExpenses] = useState([]);
@@ -31,6 +25,15 @@ const ExpensesScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+
+    const CATEGORIES = [
+        { id: 'Food', icon: 'food', color: '#FF9F43' },
+        { id: 'Transport', icon: 'car', color: '#00CFE8' },
+        { id: 'Bills', icon: 'file-document-outline', color: '#EA5455' },
+        { id: 'Shopping', icon: 'shopping', color: '#7367F0' },
+        { id: 'Entertainment', icon: 'gamepad-variant', color: '#28C76F' },
+        { id: 'Other', icon: 'dots-horizontal', color: Colors.textMuted },
+    ];
 
     // Form states
     const [amount, setAmount] = useState('');
@@ -60,30 +63,27 @@ const ExpensesScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
-            loadExpenses();
             refreshDashboard();
+            loadExpenses();
         }, [])
     );
 
     const handleSaveExpense = async () => {
-        if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+        const val = parseFloat(amount);
+        if (isNaN(val) || val <= 0) {
             Alert.alert('Invalid Amount', 'Please enter a valid expense amount.');
             return;
         }
 
         const today = getTodayDate();
-        const success = await addExpense(today, parseFloat(amount), selectedCategory, desc);
+        await addExpense(today, val, selectedCategory, desc.trim());
+        setShowModal(false);
+        setAmount('');
+        setDesc('');
+        setSelectedCategory(CATEGORIES[0].id);
 
-        if (success) {
-            setShowModal(false);
-            setAmount('');
-            setDesc('');
-            setSelectedCategory(CATEGORIES[0].id);
-            loadExpenses();
-            refreshDashboard();
-        } else {
-            Alert.alert('Error', 'Failed to save expense.');
-        }
+        refreshDashboard();
+        loadExpenses();
     };
 
     const renderExpenseItem = ({ item }) => {
@@ -121,7 +121,7 @@ const ExpensesScreen = () => {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+            <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
 
             <View style={styles.header}>
                 <View>
@@ -272,7 +272,7 @@ const ExpensesScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: Spacing.lg },
     headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary, letterSpacing: -0.5 },

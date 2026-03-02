@@ -4,7 +4,8 @@ import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
-import { Colors, Spacing } from '../theme/theme';
+import { Spacing } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { BarChart, LineChart } from 'react-native-chart-kit';
@@ -19,6 +20,8 @@ import LottieView from 'lottie-react-native';
 const screenWidth = Dimensions.get('window').width;
 
 const WellnessScreen = () => {
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { refreshDashboard } = useAppContext();
     const [weeklySteps, setWeeklySteps] = React.useState([0, 0, 0, 0, 0, 0, 0]);
     const [weeklyWater, setWeeklyWater] = React.useState([0, 0, 0, 0, 0, 0, 0]);
@@ -64,7 +67,7 @@ const WellnessScreen = () => {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+            <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
@@ -139,7 +142,7 @@ const WellnessScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
         letterSpacing: 1,
     },
     chart: { borderRadius: 16 },
-    bottomSpacer: { height: 100 },
+    bottomSpacer: { height: 130 },
 });
 
 export default WellnessScreen;

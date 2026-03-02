@@ -4,22 +4,26 @@ import { Text, Card, Button, TextInput, Portal, Modal } from 'react-native-paper
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import * as Haptics from 'expo-haptics';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { addPomodoroSession } from '../database/Database';
 import { getTodayDate, formatTime } from '../utils/helpers';
 
-const TIMER_MODES = {
-    work: { label: 'Work', duration: 25 * 60 * 1000, color: Colors.prodPrimary },
-    shortBreak: { label: 'Short Break', duration: 5 * 60 * 1000, color: Colors.healthPrimary },
-    longBreak: { label: 'Long Break', duration: 15 * 60 * 1000, color: Colors.warning },
-    custom: { label: 'Custom', duration: 10 * 60 * 1000, color: Colors.starFilled },
-};
-
 const PomodoroTimer = () => {
+    const { colors: Colors } = useTheme();
+    const styles = getStyles(Colors);
     const { dispatch } = useAppContext();
+
+    const TIMER_MODES = {
+        work: { label: 'Work', duration: 25 * 60 * 1000, color: Colors.prodPrimary },
+        shortBreak: { label: 'Short Break', duration: 5 * 60 * 1000, color: Colors.healthPrimary },
+        longBreak: { label: 'Long Break', duration: 15 * 60 * 1000, color: Colors.warning },
+        custom: { label: 'Custom', duration: 10 * 60 * 1000, color: Colors.starFilled },
+    };
+
     const [mode, setMode] = useState('work');
-    const [timeRemaining, setTimeRemaining] = useState(TIMER_MODES.work.duration);
+    const [timeRemaining, setTimeRemaining] = useState(25 * 60 * 1000); // Default to work duration
     const [isRunning, setIsRunning] = useState(false);
     const [sessionsCompleted, setSessions] = useState(0);
     const intervalRef = useRef(null);
@@ -240,7 +244,7 @@ const PomodoroTimer = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     card: {
         backgroundColor: Colors.card,
         borderRadius: BorderRadius.lg,

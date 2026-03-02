@@ -41,39 +41,39 @@ export const ColorsDark = {
 };
 
 export const ColorsLight = {
-    background: '#F7FAFC',
+    background: '#F0F4FF',
     surface: '#FFFFFF',
-    surfaceVariant: '#EDF2F7',
+    surfaceVariant: '#E8EDFB',
     card: '#FFFFFF',
 
-    healthPrimary: '#38A169',
-    healthLight: '#48BB78',
-    healthDark: '#276749',
-    healthSurface: 'rgba(56, 161, 105, 0.1)',
-    healthGlow: 'rgba(56, 161, 105, 0.2)',
+    healthPrimary: '#10B981',
+    healthLight: '#34D399',
+    healthDark: '#059669',
+    healthSurface: 'rgba(16, 185, 129, 0.12)',
+    healthGlow: 'rgba(16, 185, 129, 0.25)',
 
-    prodPrimary: '#3182CE',
-    prodLight: '#4299E1',
-    prodDark: '#2B6CB0',
-    prodSurface: 'rgba(49, 130, 206, 0.1)',
-    prodGlow: 'rgba(49, 130, 206, 0.2)',
+    prodPrimary: '#6366F1',
+    prodLight: '#818CF8',
+    prodDark: '#4F46E5',
+    prodSurface: 'rgba(99, 102, 241, 0.1)',
+    prodGlow: 'rgba(99, 102, 241, 0.2)',
 
-    textPrimary: '#1A202C',
-    textSecondary: '#4A5568',
-    textMuted: '#A0AEC0',
+    textPrimary: '#1E1B4B',
+    textSecondary: '#475569',
+    textMuted: '#94A3B8',
 
-    priorityHigh: '#E53E3E',
-    priorityMedium: '#DD6B20',
-    priorityLow: '#38A169',
+    priorityHigh: '#EF4444',
+    priorityMedium: '#F59E0B',
+    priorityLow: '#10B981',
 
-    starFilled: '#ECC94B',
+    starFilled: '#F59E0B',
     starEmpty: '#E2E8F0',
 
-    danger: '#E53E3E',
-    warning: '#DD6B20',
-    success: '#38A169',
-    border: '#E2E8F0',
-    divider: '#CBD5E0',
+    danger: '#EF4444',
+    warning: '#F59E0B',
+    success: '#10B981',
+    border: '#DDD6FE',
+    divider: '#C7D2FE',
 };
 
 // Default export for backwards compatibility
@@ -84,6 +84,7 @@ export const darkTheme = {
     dark: true,
     colors: {
         ...MD3DarkTheme.colors,
+        ...ColorsDark,
         primary: ColorsDark.healthPrimary,
         secondary: ColorsDark.prodPrimary,
         background: ColorsDark.background,
@@ -110,6 +111,7 @@ export const lightTheme = {
     dark: false,
     colors: {
         ...MD3LightTheme.colors,
+        ...ColorsLight,
         primary: ColorsLight.healthPrimary,
         secondary: ColorsLight.prodPrimary,
         background: ColorsLight.background,

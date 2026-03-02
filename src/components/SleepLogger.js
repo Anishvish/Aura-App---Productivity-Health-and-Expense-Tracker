@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, Card, TextInput, Button } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { saveSleepLog, getSleepLogForDate } from '../database/Database';
 import { getTodayDate } from '../utils/helpers';
 
 const SleepLogger = () => {
+    const { colors: Colors } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { dispatch } = useAppContext();
     const [hours, setHours] = useState('');
     const [minutes, setMinutes] = useState('');
@@ -165,7 +168,7 @@ const SleepLogger = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     card: {
         backgroundColor: Colors.card,
         borderRadius: BorderRadius.lg,

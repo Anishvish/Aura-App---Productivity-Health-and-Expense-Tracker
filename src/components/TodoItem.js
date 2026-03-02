@@ -6,27 +6,31 @@ import {
     GestureHandlerRootView,
     Swipeable,
 } from 'react-native-gesture-handler';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
-
-const PRIORITY_CONFIG = {
-    High: {
-        color: Colors.priorityHigh,
-        icon: 'arrow-up-bold',
-        bg: Colors.priorityHigh + '15',
-    },
-    Medium: {
-        color: Colors.priorityMedium,
-        icon: 'arrow-right-bold',
-        bg: Colors.priorityMedium + '15',
-    },
-    Low: {
-        color: Colors.priorityLow,
-        icon: 'arrow-down-bold',
-        bg: Colors.priorityLow + '15',
-    },
-};
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 
 const TodoItem = ({ todo, onToggle, onDelete, onEdit }) => {
+    const { colors: Colors } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
+
+    const PRIORITY_CONFIG = {
+        High: {
+            color: Colors.priorityHigh,
+            icon: 'arrow-up-bold',
+            bg: Colors.priorityHigh + '15',
+        },
+        Medium: {
+            color: Colors.priorityMedium,
+            icon: 'arrow-right-bold',
+            bg: Colors.priorityMedium + '15',
+        },
+        Low: {
+            color: Colors.priorityLow,
+            icon: 'arrow-down-bold',
+            bg: Colors.priorityLow + '15',
+        },
+    };
+
     const priorityConfig = PRIORITY_CONFIG[todo.priority] || PRIORITY_CONFIG.Medium;
 
     const renderRightActions = (progress, dragX) => {
@@ -107,7 +111,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',

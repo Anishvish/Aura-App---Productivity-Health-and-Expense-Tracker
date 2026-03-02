@@ -3,20 +3,25 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 
 const OverviewCard = ({
     title,
     value,
     subtitle,
     icon,
-    accentColor = Colors.healthPrimary,
+    accentColor,
     progress = null, // 0 to 100
     onPress,
 }) => {
+    const { colors: Colors } = useTheme();
+    const styles = getStyles(Colors);
+    const finalAccentColor = accentColor || Colors.healthPrimary;
+
     return (
         <Card
-            style={[styles.card, { borderLeftColor: accentColor }]}
+            style={[styles.card, { borderLeftColor: finalAccentColor }]}
             onPress={onPress}
             mode="contained">
             <Card.Content style={styles.content}>
@@ -26,26 +31,26 @@ const OverviewCard = ({
                             size={56}
                             width={4}
                             fill={progress > 100 ? 100 : progress}
-                            tintColor={accentColor}
+                            tintColor={finalAccentColor}
                             backgroundColor={Colors.surfaceVariant}
                             rotation={0}
                             lineCap="round"
                         >
                             {() => (
-                                <View style={[styles.iconBg, { backgroundColor: accentColor + '18', width: 44, height: 44 }]}>
-                                    <MaterialCommunityIcons name={icon} size={24} color={accentColor} />
+                                <View style={[styles.iconBg, { backgroundColor: finalAccentColor + '18', width: 44, height: 44 }]}>
+                                    <MaterialCommunityIcons name={icon} size={24} color={finalAccentColor} />
                                 </View>
                             )}
                         </AnimatedCircularProgress>
                     ) : (
-                        <View style={[styles.iconBg, { backgroundColor: accentColor + '18' }]}>
-                            <MaterialCommunityIcons name={icon} size={28} color={accentColor} />
+                        <View style={[styles.iconBg, { backgroundColor: finalAccentColor + '18' }]}>
+                            <MaterialCommunityIcons name={icon} size={28} color={finalAccentColor} />
                         </View>
                     )}
                 </View>
                 <View style={styles.textContainer}>
                     <Text style={styles.title}>{title}</Text>
-                    <Text style={[styles.value, { color: accentColor }]}>{value}</Text>
+                    <Text style={[styles.value, { color: finalAccentColor }]}>{value}</Text>
                     {subtitle ? (
                         <Text style={styles.subtitle}>{subtitle}</Text>
                     ) : null}
@@ -55,7 +60,7 @@ const OverviewCard = ({
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     card: {
         backgroundColor: Colors.card,
         borderRadius: BorderRadius.lg,

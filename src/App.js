@@ -2,11 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { PaperProvider, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { theme, Colors } from './theme/theme';
-import { AuthProvider } from './context/AuthContext';
+import { theme, darkTheme, lightTheme, Colors } from './theme/theme';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import AppNavigator from './navigation/AppNavigator';
 import { initDatabase } from './database/Database';
+
+const ThemeWrapper = ({ children }) => {
+    const { user } = useAuth();
+    const activeTheme = user?.theme === 'light' ? lightTheme : darkTheme;
+
+    return (
+        <PaperProvider theme={activeTheme}>
+            {children}
+        </PaperProvider>
+    );
+};
 
 const App = () => {
     const [dbReady, setDbReady] = useState(false);
@@ -55,13 +66,13 @@ const App = () => {
 
     return (
         <SafeAreaProvider>
-            <PaperProvider theme={theme}>
-                <AuthProvider>
+            <AuthProvider>
+                <ThemeWrapper>
                     <AppProvider>
                         <AppNavigator />
                     </AppProvider>
-                </AuthProvider>
-            </PaperProvider>
+                </ThemeWrapper>
+            </AuthProvider>
         </SafeAreaProvider>
     );
 };

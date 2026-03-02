@@ -4,7 +4,8 @@ import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import LottieView from 'lottie-react-native';
@@ -17,6 +18,8 @@ import { getGreeting, formatWaterAmount, getMotivationalMessage, getTodayDate, g
 const screenWidth = Dimensions.get('window').width;
 
 const DashboardScreen = ({ navigation }) => {
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { state, refreshDashboard } = useAppContext();
     const { user, logout } = useAuth();
     const [weeklySteps, setWeeklySteps] = React.useState([0, 0, 0, 0, 0, 0, 0]);
@@ -64,7 +67,7 @@ const DashboardScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+            <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
@@ -206,7 +209,7 @@ const DashboardScreen = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
     scrollView: { flex: 1 },
     scrollContent: { padding: Spacing.md, paddingTop: Spacing.xl },

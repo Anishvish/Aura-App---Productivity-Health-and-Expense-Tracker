@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserById } from '../database/Database';
+import { getUserById, updateUserTheme } from '../database/Database';
 
 const AuthContext = createContext();
 
@@ -63,8 +63,20 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
     };
 
+    // Instant theme switching - updates state immediately + persists to DB
+    const setTheme = async (themeName) => {
+        if (user) {
+            setUser(prev => ({ ...prev, theme: themeName }));
+            try {
+                await updateUserTheme(user.id, themeName);
+            } catch (e) {
+                console.error('Error persisting theme:', e);
+            }
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, isLoggedIn: !!user, login, signup, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, isLoading, isLoggedIn: !!user, login, signup, logout, updateUser, setTheme }}>
             {children}
         </AuthContext.Provider>
     );

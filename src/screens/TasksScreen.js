@@ -5,7 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import TodoItem from '../components/TodoItem';
 import PomodoroTimer from '../components/PomodoroTimer';
@@ -13,6 +14,8 @@ import { addTodo, getTodos, toggleTodo, deleteTodo, editTodo } from '../database
 import { ScrollView } from 'react-native';
 
 const TasksScreen = () => {
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { dispatch } = useAppContext();
     const [activeTab, setActiveTab] = useState('todos');
     const [todos, setTodosList] = useState([]);
@@ -73,7 +76,7 @@ const TasksScreen = () => {
     return (
         <GestureHandlerRootView style={styles.container}>
             <SafeAreaView style={styles.safeArea} edges={['top']}>
-                <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+                <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
 
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Productivity</Text>
@@ -195,7 +198,7 @@ const TasksScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
     safeArea: { flex: 1 },
     header: { padding: Spacing.md, paddingTop: Spacing.xl },
@@ -204,16 +207,16 @@ const styles = StyleSheet.create({
     tabRow: { flexDirection: 'row', paddingHorizontal: Spacing.md, gap: Spacing.sm, marginBottom: Spacing.md },
     tabButton: { flex: 1, borderRadius: BorderRadius.md, borderColor: Colors.border },
     todosContainer: { flex: 1 },
-    listContent: { paddingHorizontal: Spacing.md, paddingBottom: 100 },
+    listContent: { paddingHorizontal: Spacing.md, paddingBottom: 150 },
     listHeader: { marginBottom: Spacing.sm },
     listHeaderText: { fontSize: 13, color: Colors.textMuted, fontWeight: '500' },
     separator: { height: 4 },
-    emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 100 },
+    emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 150 },
     emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textSecondary, marginTop: Spacing.md },
     emptySubtitle: { fontSize: 14, color: Colors.textMuted, marginTop: Spacing.xs },
     pomodoroContainer: { flex: 1 },
     pomodoroContent: { padding: Spacing.md },
-    fab: { position: 'absolute', right: Spacing.md, bottom: Spacing.lg, backgroundColor: Colors.prodPrimary, borderRadius: 28, elevation: 8 },
+    fab: { position: 'absolute', right: Spacing.md, bottom: 90, backgroundColor: Colors.prodPrimary, borderRadius: 28, elevation: 8 },
     modal: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.lg, marginHorizontal: Spacing.lg },
     modalTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, marginBottom: Spacing.md },
     modalInput: { backgroundColor: Colors.surfaceVariant, marginBottom: Spacing.md },

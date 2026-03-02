@@ -203,6 +203,17 @@ export const updateUserProfile = async (id, { name, email, stepGoal, waterGoal, 
     }
 };
 
+// Quick theme update (no full profile save needed)
+export const updateUserTheme = async (userId, theme) => {
+    try {
+        await db.runAsync('UPDATE users SET theme = ? WHERE id = ?', [theme, userId]);
+        return true;
+    } catch (error) {
+        console.error('Error updating theme:', error);
+        return false;
+    }
+};
+
 // ==================== STEPS ====================
 export const getStepsForDate = async (date) => {
     try {

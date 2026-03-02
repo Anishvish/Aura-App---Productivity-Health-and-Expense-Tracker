@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, StatusBar, Animated, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, StatusBar, Animated, KeyboardAvoidingView, Platform, TouchableOpacity, Image } from 'react-native';
 import { Text, TextInput, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAuth } from '../context/AuthContext';
 import { createUser } from '../database/Database';
 
 const SignUpScreen = ({ navigation }) => {
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { signup } = useAuth();
     const [name, setName] = useState('');
     const [contact, setContact] = useState('');
@@ -69,7 +72,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+            <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.keyboardView}>
@@ -81,7 +84,7 @@ const SignUpScreen = ({ navigation }) => {
                     {/* Header */}
                     <Animated.View style={[styles.headerSection, { opacity: fadeAnim }]}>
                         <View style={styles.logoSmall}>
-                            <MaterialCommunityIcons name="white-balance-sunny" size={32} color={Colors.healthPrimary} />
+                            <Image source={require('../../assets/icon.png')} style={{ width: 40, height: 40, borderRadius: 20 }} />
                         </View>
                         <Text style={styles.headerTitle}>Create Account</Text>
                         <Text style={styles.headerSubtitle}>Start your wellness journey with Aura</Text>
@@ -209,7 +212,7 @@ const SignUpScreen = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
     keyboardView: { flex: 1 },
     scrollContent: { flexGrow: 1, padding: Spacing.lg, paddingTop: Spacing.md },

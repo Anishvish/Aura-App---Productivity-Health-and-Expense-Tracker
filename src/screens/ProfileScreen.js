@@ -5,12 +5,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAuth } from '../context/AuthContext';
 import { updateUserProfile } from '../database/Database';
 
 const ProfileScreen = () => {
-    const { user, logout, updateUser } = useAuth();
+    const { colors: Colors, dark: isDarkTheme } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
+    const { user, logout, updateUser, setTheme } = useAuth();
     const [editingProfile, setEditingProfile] = useState(false);
     const [editingFinance, setEditingFinance] = useState(false);
     const [name, setName] = useState(user?.name || '');
@@ -145,7 +148,7 @@ const ProfileScreen = () => {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+            <StatusBar barStyle={isDarkTheme ? "light-content" : "dark-content"} backgroundColor={Colors.background} />
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
                 {/* Profile Header */}
@@ -379,29 +382,26 @@ const ProfileScreen = () => {
                     <View style={styles.settingRow}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <MaterialCommunityIcons name="theme-light-dark" size={24} color={Colors.prodPrimary} style={{ marginRight: Spacing.sm }} />
-                            <Text style={styles.settingText}>Dark Mode</Text>
+                            <Text style={styles.settingText}>Theme</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Button
                                 mode={themePreference === 'dark' ? 'contained' : 'outlined'}
-                                onPress={() => { setThemePreference('dark'); setEditingProfile(true); }} // Piggyback save button visibility
+                                onPress={() => { setThemePreference('dark'); setTheme('dark'); }}
                                 compact
                                 style={{ marginRight: 8 }}
                                 buttonColor={themePreference === 'dark' ? Colors.prodPrimary : 'transparent'}>
-                                Dark
+                                🌙 Dark
                             </Button>
                             <Button
                                 mode={themePreference === 'light' ? 'contained' : 'outlined'}
-                                onPress={() => { setThemePreference('light'); setEditingProfile(true); }}
+                                onPress={() => { setThemePreference('light'); setTheme('light'); }}
                                 compact
                                 buttonColor={themePreference === 'light' ? Colors.healthPrimary : 'transparent'}>
-                                Light
+                                ☀️ Light
                             </Button>
                         </View>
                     </View>
-                    {themePreference !== (user?.theme || 'dark') && (
-                        <Text style={styles.restartWarning}>⚠️ Save Profile & completely restart the app to apply theme.</Text>
-                    )}
                 </View>
 
                 {/* About Aura */}
@@ -431,7 +431,7 @@ const ProfileScreen = () => {
                     Sign Out
                 </Button>
 
-                <View style={{ height: 100 }} />
+                <View style={{ height: 150 }} />
             </ScrollView>
 
             <Snackbar
@@ -450,24 +450,30 @@ const ProfileScreen = () => {
     );
 };
 
-const DetailRow = ({ icon, label, value, color = Colors.textMuted }) => (
-    <View style={detailStyles.row}>
-        <View style={[detailStyles.iconBg, { backgroundColor: color + '15' }]}>
-            <MaterialCommunityIcons name={icon} size={18} color={color} />
-        </View>
-        <Text style={detailStyles.label}>{label}</Text>
-        <Text style={detailStyles.value}>{value}</Text>
-    </View>
-);
+const DetailRow = ({ icon, label, value, color }) => {
+    const { colors: Colors } = useTheme();
+    const detailStyles = getDetailStyles(Colors);
+    const finalColor = color || Colors.textMuted;
 
-const detailStyles = StyleSheet.create({
+    return (
+        <View style={detailStyles.row}>
+            <View style={[detailStyles.iconBg, { backgroundColor: finalColor + '15' }]}>
+                <MaterialCommunityIcons name={icon} size={18} color={finalColor} />
+            </View>
+            <Text style={detailStyles.label}>{label}</Text>
+            <Text style={detailStyles.value}>{value}</Text>
+        </View>
+    );
+};
+
+const getDetailStyles = (Colors) => StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: Colors.border + '40' },
     iconBg: { width: 34, height: 34, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
     label: { fontSize: 14, color: Colors.textSecondary, flex: 1 },
     value: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
 });
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
     scrollContent: { padding: Spacing.md },
     profileHeader: { alignItems: 'center', paddingVertical: Spacing.lg },

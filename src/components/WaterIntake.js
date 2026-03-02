@@ -3,7 +3,8 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, Card, Button } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { addWaterIntake, getWaterIntakeForDate } from '../database/Database';
 import { getTodayDate, formatWaterAmount } from '../utils/helpers';
@@ -11,6 +12,8 @@ import { getTodayDate, formatWaterAmount } from '../utils/helpers';
 const WATER_AMOUNTS = [250, 500, 750];
 
 const WaterIntake = () => {
+    const { colors: Colors } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { state, dispatch } = useAppContext();
 
     useEffect(() => {
@@ -106,7 +109,7 @@ const WaterIntake = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     card: {
         backgroundColor: Colors.card,
         borderRadius: BorderRadius.lg,

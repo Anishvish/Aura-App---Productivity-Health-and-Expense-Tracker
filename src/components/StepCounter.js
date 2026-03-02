@@ -3,12 +3,15 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { Text, Card, Button, ProgressBar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pedometer } from 'expo-sensors';
-import { Colors, Spacing, BorderRadius } from '../theme/theme';
+import { Spacing, BorderRadius } from '../theme/theme';
+import { useTheme } from 'react-native-paper';
 import { useAppContext } from '../context/AppContext';
 import { updateSteps, getStepsForDate } from '../database/Database';
 import { getTodayDate } from '../utils/helpers';
 
 const StepCounter = () => {
+    const { colors: Colors } = useTheme();
+    const styles = getStyles ? getStyles(Colors) : {};
     const { state, dispatch } = useAppContext();
     const [isAvailable, setIsAvailable] = useState(false);
     const [isTracking, setIsTracking] = useState(false);
@@ -31,24 +34,16 @@ const StepCounter = () => {
     };
 
     const checkAvailability = async () => {
-        const available = await Pedometer.isAvailableAsync();
-        setIsAvailable(available);
+        try {
+            const available = await Pedometer.isAvailableAsync();
+            setIsAvailable(available);
 
-        if (available) {
-            // Get today's steps from pedometer
-            const end = new Date();
-            const start = new Date();
-            start.setHours(0, 0, 0, 0);
+            if (available) {
+                // Try historical fetch first
+                const end = new Date();
+                const start = new Date();
+                start.setHours(0, 0, 0, 0);
 
-            if (Platform.OS === 'android') {
-                // Fallback for Android: `getStepCountAsync` is often unsupported for historical ranges
-                if (state.todaySteps === 0) {
-                    const mockSteps = Math.floor(Math.random() * 3000) + 500;
-                    dispatch({ type: 'SET_STEPS', payload: mockSteps });
-                    const today = getTodayDate();
-                    await updateSteps(today, mockSteps);
-                }
-            } else {
                 try {
                     const result = await Pedometer.getStepCountAsync(start, end);
                     if (result && result.steps > state.todaySteps) {
@@ -57,9 +52,14 @@ const StepCounter = () => {
                         await updateSteps(today, result.steps);
                     }
                 } catch (e) {
-                    console.log('Could not get historical steps:', e);
+                    console.log('Historical pedometer data not accessible on this device:', e.message);
                 }
+
+                // Always auto-start live tracking to capture actual phone movement
+                startTracking();
             }
+        } catch (error) {
+            console.log("Pedometer availability check failed:", error);
         }
     };
 
@@ -200,7 +200,7 @@ const StepCounter = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors) => StyleSheet.create({
     card: {
         backgroundColor: Colors.card,
         borderRadius: BorderRadius.lg,
