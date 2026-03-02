@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Aura",
+    "slug": "aura",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0A0E17"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0E17"
+      },
+      "package": "com.aura.app",
+      "permissions": [
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow Aura to access your motion data for step counting."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "sounds": []
+        }
+      ],
+      "expo-asset",
+      "expo-font",
+      "expo-sqlite",
+      "@react-native-community/datetimepicker"
+    ]
+  }
+}

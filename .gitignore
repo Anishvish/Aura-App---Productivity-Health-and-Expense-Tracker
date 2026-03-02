@@ -1,0 +1,39 @@
+# OSX
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Xcode
+ios/build/
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+*.apk
+*.aab
+*.keystore
+!android/app/debug.keystore
+
+# Expo
+.expo/
+
+# Metro
+.metro-health-check*
+
+# Buck
+buck-out/
+\.buckd/
+
+# Bundle artifacts
+*.jsbundle
+
+# CocoaPods
+/ios/Pods/
+
+# Env
+.env
+.env.*
